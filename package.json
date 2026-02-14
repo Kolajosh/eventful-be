@@ -4,9 +4,9 @@
   "description": "Eventful Backend System",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "test": "jest",
     "studio": "prisma studio",
     "docker:up": "docker-compose up -d",
