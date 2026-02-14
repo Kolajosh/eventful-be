@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CREATOR
+  EVENTEE
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+}
+
+enum TicketStatus {
+  ACTIVE
+  USED
+  REVOKED
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         Role      @default(EVENTEE)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  events       Event[]
+  tickets      Ticket[]
+  payments     Payment[]
+  reminders    Reminder[]
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  creatorId   String
+  creator     User        @relation(fields: [creatorId], references: [id])
+  title       String
+  description String
+  location    String
+  date        DateTime
+  ticketPrice Decimal
+  ticketLimit Int
+  status      EventStatus @default(DRAFT)
+  coverImage  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  tickets     Ticket[]
+  payments    Payment[]
+  reminders   Reminder[]
+}
+
+model Ticket {
+  id          String       @id @default(uuid())
+  eventId     String
+  event       Event        @relation(fields: [eventId], references: [id])
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  qrCode      String       @unique
+  status      TicketStatus @default(ACTIVE)
+  purchasedAt DateTime     @default(now())
+  
+  paymentId   String?
+  payment     Payment?     @relation(fields: [paymentId], references: [id])
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  eventId     String
+  event       Event         @relation(fields: [eventId], references: [id])
+  amount      Decimal
+  reference   String        @unique
+  status      PaymentStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+
+  tickets     Ticket[]
+}
+
+model Reminder {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  eventId       String
+  event         Event    @relation(fields: [eventId], references: [id])
+  scheduledTime DateTime
+  sent          Boolean  @default(false)
+}
