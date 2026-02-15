@@ -13,6 +13,7 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
     "migrate:dev": "npx prisma migrate dev",
+    "migrate:deploy": "npx prisma migrate deploy",
     "postinstall": "prisma generate"
   },
   "keywords": [],
