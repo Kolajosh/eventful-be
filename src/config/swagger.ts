@@ -11,6 +11,10 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
+        url: "https://eventful-be-4a7t.onrender.com/api/v1",
+        description: "Production Server",
+      },
+      {
         url: "http://localhost:3000/api/v1",
         description: "Local Development Server",
       },
